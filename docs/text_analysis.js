@@ -254,6 +254,16 @@ stoplist = ['i',
 # In[ ]:
 
 
+def get_sentiment(text):
+    return pn.pane.Markdown(f"""
+    Polarity: {TextBlob(text).polarity} \\n
+    Subjectivity: {TextBlob(text).subjectivity}
+    """)
+
+
+# In[ ]:
+
+
 def get_ngram(text):
     from sklearn.feature_extraction.text import CountVectorizer
     c_vec = CountVectorizer(stop_words=stoplist, ngram_range=(2,3))
@@ -293,13 +303,29 @@ def get_ntopics(text, ntopics):
 # In[ ]:
 
 
-def get_text_results(text, ntopics):
+def get_text_results(text, ntopics, file):
+    if (len(text)==0) and (file is not None):
+        text = file.decode()
     return pn.Column(
+                pn.pane.Markdown("""
+        This app provides a simple text analysis for a given input text or text file. \\n
+        - Sentiment analysis uses [TextBlob](https://textblob.readthedocs.io/).
+        - N-gram analysis uses [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html) to see which words show up together.
+        - Topic modeling uses [scikit-learn](https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html) NMF model and we can change the number of topics we'd like to see in the result.
+        """),
+                pn.pane.Markdown("##Sentiment analysis:"),
+                get_sentiment(text),
                 pn.pane.Markdown("##N-gram analysis:"),
                 get_ngram(text),
                 pn.pane.Markdown("##Topic modeling:"),
                 get_ntopics(text, ntopics)
             )
+
+
+# In[ ]:
+
+
+file_input_widget = pn.widgets.FileInput()
 
 
 # In[ ]:
@@ -317,13 +343,19 @@ ntopics_widget = pn.widgets.IntSlider(name='Number of topics', start=2, end=10, 
 # In[ ]:
 
 
-interactive = pn.bind(get_text_results, text_widget, ntopics_widget)
+interactive = pn.bind(get_text_results, text_widget, ntopics_widget, file_input_widget)
 
 
 # Layout using Template
 template = pn.template.FastListTemplate(
     title='Simple Text Analysis', 
-    sidebar=[ntopics_widget, text_widget],
+    sidebar=[
+        ntopics_widget, 
+        text_widget, 
+        "Remove the text and upload a text file",
+        file_input_widget,
+
+    ],
     main=[interactive],
     accent_base_color="#88d8b0",
     header_background="#88d8b0",
