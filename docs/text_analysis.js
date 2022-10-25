@@ -322,7 +322,7 @@ def get_text_results(_):
         pn.pane.Markdown("""
         ##Sentiment analysis:"""),
         get_sentiment(text_widget.value),
-        pn.pane.Markdown("##N-gram analysis:"),
+        pn.pane.Markdown("##N-gram analysis (bigram/trigram):"),
         get_ngram(text_widget.value),
         pn.pane.Markdown("##Topic modeling:"),
         get_ntopics(text_widget.value, ntopics_widget.value)
