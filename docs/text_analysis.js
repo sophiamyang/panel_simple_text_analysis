@@ -37,7 +37,7 @@ init_doc()
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[ ]:
+# In[17]:
 
 
 import panel as pn
@@ -50,7 +50,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[ ]:
+# In[18]:
 
 
 sample_text = """
@@ -64,7 +64,7 @@ There is a saying that explains that one can only get true happiness when one co
 Our emotions are created by our thoughts. Therefore, it is very important that we work on having only positive thoughts and this can be achieved when we see life in a positive light."""
 
 
-# In[ ]:
+# In[30]:
 
 
 # from nltk.corpus import stopwords
@@ -251,7 +251,7 @@ stoplist = ['i',
  'though']
 
 
-# In[ ]:
+# In[31]:
 
 
 def get_sentiment(text):
@@ -261,14 +261,17 @@ def get_sentiment(text):
     """)
 
 
-# In[ ]:
+# In[32]:
 
 
 def get_ngram(text):
     from sklearn.feature_extraction.text import CountVectorizer
     c_vec = CountVectorizer(stop_words=stoplist, ngram_range=(2,3))
     # matrix of ngrams
-    ngrams = c_vec.fit_transform([text])
+    try:
+        ngrams = c_vec.fit_transform([text])
+    except ValueError: # if less than 2 words, return empty result
+        return
     # count frequency of ngrams
     count_values = ngrams.toarray().sum(axis=0)
     # list of ngrams
@@ -280,7 +283,7 @@ def get_ngram(text):
     return pn.widgets.Tabulator(df_ngram, height=300)
 
 
-# In[ ]:
+# In[29]:
 
 
 def get_ntopics(text, ntopics):
@@ -290,7 +293,10 @@ def get_ntopics(text, ntopics):
     tfidf_vectorizer = TfidfVectorizer(stop_words=stoplist, ngram_range=(2,3))
     nmf = NMF(n_components=ntopics)
     pipe = make_pipeline(tfidf_vectorizer, nmf)
-    pipe.fit([text])
+    try:
+        pipe.fit([text])
+    except ValueError: # if less than 2 words, return empty result
+        return
     message = ""
     for topic_idx, topic in enumerate(nmf.components_):
         message += "####Topic #%d: " % topic_idx
