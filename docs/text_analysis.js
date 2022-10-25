@@ -303,29 +303,40 @@ def get_ntopics(text, ntopics):
 # In[ ]:
 
 
-def get_text_results(text, ntopics, file):
-    if (len(text)==0) and (file is not None):
-        text = file.decode()
+explanation = pn.pane.Markdown("""
+This app provides a simple text analysis for a given input text or text file. \\n
+- Sentiment analysis uses [TextBlob](https://textblob.readthedocs.io/).
+- N-gram analysis uses [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html) to see which words show up together.
+- Topic modeling uses [scikit-learn](https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html) NMF model and we can change the number of topics we'd like to see in the result.
+""")
+
+def get_text_results(_):
     return pn.Column(
-                pn.pane.Markdown("""
-        This app provides a simple text analysis for a given input text or text file. \\n
-        - Sentiment analysis uses [TextBlob](https://textblob.readthedocs.io/).
-        - N-gram analysis uses [scikit-learn](https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.CountVectorizer.html) to see which words show up together.
-        - Topic modeling uses [scikit-learn](https://scikit-learn.org/stable/auto_examples/applications/plot_topics_extraction_with_nmf_lda.html) NMF model and we can change the number of topics we'd like to see in the result.
-        """),
-                pn.pane.Markdown("##Sentiment analysis:"),
-                get_sentiment(text),
-                pn.pane.Markdown("##N-gram analysis:"),
-                get_ngram(text),
-                pn.pane.Markdown("##Topic modeling:"),
-                get_ntopics(text, ntopics)
-            )
+        explanation,
+        pn.pane.Markdown("##Sentiment analysis:"),
+        get_sentiment(text_widget.value),
+        pn.pane.Markdown("##N-gram analysis:"),
+        get_ngram(text_widget.value),
+        pn.pane.Markdown("##Topic modeling:"),
+        get_ntopics(text_widget.value, ntopics_widget.value)
+    )
+
+
+# In[ ]:
+
+
+button = pn.widgets.Button(name="Click me to run!")
 
 
 # In[ ]:
 
 
 file_input_widget = pn.widgets.FileInput()
+def update_text_widget(event):
+    text_widget.value = event.new.decode("utf-8")
+# when the value of file_input_widget changes, 
+# run this function to update the text of the text widget
+file_input_widget.param.watch(update_text_widget, "value");
 
 
 # In[ ]:
@@ -343,30 +354,24 @@ ntopics_widget = pn.widgets.IntSlider(name='Number of topics', start=2, end=10, 
 # In[ ]:
 
 
-interactive = pn.bind(get_text_results, text_widget, ntopics_widget, file_input_widget)
+interactive = pn.bind(get_text_results, button)
 
 
 # Layout using Template
 template = pn.template.FastListTemplate(
     title='Simple Text Analysis', 
     sidebar=[
+        button,
         ntopics_widget, 
         text_widget, 
         "Remove the text and upload a text file",
-        file_input_widget,
-
+        file_input_widget
     ],
-    main=[interactive],
+    main=[pn.panel(interactive, loading_indicator=True)],
     accent_base_color="#88d8b0",
     header_background="#88d8b0",
 )
 template.servable()
-
-
-# In[ ]:
-
-
-
 
 
 
