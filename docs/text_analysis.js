@@ -256,8 +256,8 @@ stoplist = ['i',
 
 def get_sentiment(text):
     return pn.pane.Markdown(f"""
-    Polarity: {TextBlob(text).polarity} \\n
-    Subjectivity: {TextBlob(text).subjectivity}
+    Polarity (range from -1 negative to 1 positive): {TextBlob(text).polarity} \\n
+    Subjectivity (range from 0 objective to 1 subjective): {TextBlob(text).subjectivity}
     """)
 
 
@@ -313,7 +313,8 @@ This app provides a simple text analysis for a given input text or text file. \\
 def get_text_results(_):
     return pn.Column(
         explanation,
-        pn.pane.Markdown("##Sentiment analysis:"),
+        pn.pane.Markdown("""
+        ##Sentiment analysis:"""),
         get_sentiment(text_widget.value),
         pn.pane.Markdown("##N-gram analysis:"),
         get_ngram(text_widget.value),
@@ -364,7 +365,7 @@ template = pn.template.FastListTemplate(
         button,
         ntopics_widget, 
         text_widget, 
-        "Remove the text and upload a text file",
+        "Upload a text file",
         file_input_widget
     ],
     main=[pn.panel(interactive, loading_indicator=True)],
