@@ -37,7 +37,7 @@ init_doc()
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[17]:
+# In[ ]:
 
 
 import panel as pn
@@ -50,7 +50,7 @@ import warnings
 warnings.filterwarnings('ignore')
 
 
-# In[18]:
+# In[ ]:
 
 
 sample_text = """
@@ -64,7 +64,7 @@ There is a saying that explains that one can only get true happiness when one co
 Our emotions are created by our thoughts. Therefore, it is very important that we work on having only positive thoughts and this can be achieved when we see life in a positive light."""
 
 
-# In[30]:
+# In[ ]:
 
 
 # from nltk.corpus import stopwords
@@ -251,7 +251,7 @@ stoplist = ['i',
  'though']
 
 
-# In[31]:
+# In[ ]:
 
 
 def get_sentiment(text):
@@ -261,7 +261,7 @@ def get_sentiment(text):
     """)
 
 
-# In[32]:
+# In[ ]:
 
 
 def get_ngram(text):
@@ -283,7 +283,7 @@ def get_ngram(text):
     return pn.widgets.Tabulator(df_ngram, width=600, height=300)
 
 
-# In[29]:
+# In[ ]:
 
 
 def get_ntopics(text, ntopics):
@@ -325,7 +325,7 @@ def get_text_results(_):
         pn.pane.Markdown("##N-gram analysis (bigram/trigram):"),
         get_ngram(text_widget.value.replace("\\n", "")),
         pn.pane.Markdown("##Topic modeling:"),
-        get_ntopics(text_widget.value, ntopics_widget.value)
+        get_ntopics(text_widget.value.replace("\\n", ""), ntopics_widget.value)
     )
 
 
