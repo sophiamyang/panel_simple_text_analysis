@@ -271,7 +271,7 @@ def get_ngram(text):
     try:
         ngrams = c_vec.fit_transform([text])
     except ValueError: # if less than 2 words, return empty result
-        return
+        return pn.widgets.Tabulator(width=600)
     # count frequency of ngrams
     count_values = ngrams.toarray().sum(axis=0)
     # list of ngrams
@@ -280,7 +280,7 @@ def get_ngram(text):
                 ).rename(columns={0: 'frequency', 1:'bigram/trigram'})
     df_ngram['polarity'] = df_ngram['bigram/trigram'].apply(lambda x: TextBlob(x).polarity)
     df_ngram['subjective'] = df_ngram['bigram/trigram'].apply(lambda x: TextBlob(x).subjectivity)
-    return pn.widgets.Tabulator(df_ngram, height=300)
+    return pn.widgets.Tabulator(df_ngram, width=600, height=300)
 
 
 # In[29]:
